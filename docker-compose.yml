@@ -1,8 +1,8 @@
 version: '2'
 
 services:
- noop:
-  container_name: noop
+ intent_recognition:
+  container_name: intent_recognition
   build: .
   ports:
   - "8000:5000"
