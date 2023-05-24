@@ -111,9 +111,9 @@ def get_predicted_values(inputs, tokenizer, model):
 
 def mind(comma, intentions):
     # Update the values of the text key in the nodes with the predicted values
-    for node, intention in zip(comma["AIF"]["nodes"], intentions):
-        if node["type"] == "YA":
-            node["text"] = intention
+    ya_nodes = [node for node in comma["AIF"]["nodes"] if node["type"] == "YA"]
+    for node, intention in zip(ya_nodes, intentions):
+        node["text"] = intention  # Update the text value with the predicted value
 
     return comma
 
