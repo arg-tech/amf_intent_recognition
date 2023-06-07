@@ -1,17 +1,32 @@
+import re
 import torch
 from transformers import BertForSequenceClassification, BertTokenizer
 from sklearn.preprocessing import LabelEncoder
-#from datetime import datetime, timedelta
 
 def filter_xaif(xaif_data):
     filtered_xaif = xaif_data.copy()
     l_ya_edges = []
     l_ya_speaker = []
 
+    # regex for reporter and speaker
+    regex_no_reporter = re.compile('\w+\s:\s*')
+    regex_no_speaker = r'\w+\s:\s*|\w+:\s*'
+
     if "nodes" in xaif_data["AIF"]:
         for node in xaif_data["AIF"]["nodes"]:
             if node['type'] == 'L' or node['type'] == 'YA':
-                l_ya_speaker.append(node)
+
+                # Check for reported locutions and remove them
+                if node['type'] == 'L' and regex_no_reporter.match(node['text']):
+                    
+                    # Check for locutions with speaker and remove the speaker
+                    # only if the node is not in l_y_speaker already
+                    if node not in l_ya_speaker:
+                        node['text'] = re.sub(regex_no_speaker, '', node['text'])
+                        l_ya_speaker.append(node)
+                        
+                elif node['type'] == 'YA':
+                    l_ya_speaker.append(node)
 
     if "edges" in xaif_data["AIF"]:
         for edge in xaif_data["AIF"]["edges"]:
@@ -96,13 +111,13 @@ def get_predicted_values(inputs, tokenizer, model):
 
 def mind(comma, intentions):
     # Update the values of the text key in the nodes with the predicted values
-    ya_nodes = [node for node in comma["AIF"]["nodes"] if node["type"] == "YA"]
-    for node, intention in zip(ya_nodes, intentions):
-        node["text"] = intention  # Update the text value with the predicted value
+    for node, intention in zip(comma["AIF"]["nodes"], intentions):
+        if node["type"] == "YA":
+            node["text"] = intention
 
     return comma
 
-def generate_predictions(input_xaif_data):
+def generate_predictions_signature_nts(input_xaif_data):
     comma = filter_xaif(input_xaif_data)
     filtered = (filter_nodes(comma))
     # Load BERT model and tokenizer
