@@ -57,5 +57,7 @@ This project is licensed under the [MIT License](LICENSE).
 ## References
 
 Budzynska, K., Janier, M., Reed, C., & Saint-Dizier, P. (2016). Theoretical foundations for illocutionary structure parsing. Argument & Computation, 7(1), 91-108.
+
 Chesnevar, C., Modgil, S., Rahwan, I., Reed, C., Simari, G., South, M., ... & Willmott, S. (2006). Towards an argument interchange format. The knowledge engineering review, 21(4), 293-316.
+
 Foulis, M., Visser, J., & Reed, C. (2020). Dialogical Fingerprinting of Debaters. Computational Models of Argument, 465–466. https://doi.org/10.323
