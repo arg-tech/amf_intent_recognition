@@ -42,6 +42,14 @@ This repository contains the AMF Intent Recognition project, which focuses on re
 4. Evaluate the model: Employ the evaluation scripts to assess the performance of your trained model on argumentation-specific test datasets or cross-validation sets.
 5. Perform inference: Deploy the trained model and utilize the provided inference utilities to perform intent recognition on new user inputs related to argumentation.
 
+## Web Services (REST APIS)
+
+1. http://amfws-intentifier.arg.tech/amf_ts : Intent classification for argument framework with timestamps generation.
+2. http://amfws-intentifier.arg.tech/amf_nts : Intent classification for argument framework with no timestamps generation.
+3. http://amfws-intentifier.arg.tech/signature_ts : Intent classification for xaif jsons with timestamps generation.
+4. http://amfws-intentifier.arg.tech/signature_nts : Intent classification for xaif jsons with no timestamps generation.
+
+
 ## Contributing
 
 Contributions are welcome! If you find any issues or have suggestions for improvements, please open an issue or submit a pull request. Make sure to follow the repository's code of conduct.
