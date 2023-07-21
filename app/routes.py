@@ -6,6 +6,7 @@ from app.amf_nts import generate_predictions_amf_nts
 from app.amf_ts import generate_predictions_amf_ts
 from app.signature_nts import generate_predictions_signature_nts
 from app.signature_ts import generate_predictions_signature_ts
+from app.signature_evaulation_1 import generate_predictions_signature_evaulation_1
 
 @application.route('/amf_nts', methods=['GET', 'POST'])
 def amf_nts():
@@ -55,6 +56,18 @@ def signature_ts():
     elif request.method == 'GET':
         return render_template('index_signature_ts.html')
     
+@application.route('/signature_evaulation_1', methods=['GET', 'POST'])
+def signature_eval_1():
+    if request.method == 'POST':
+        f = request.files['file']
+        f.save(f.filename)
+        ff = open(f.filename, 'r')
+        content = json.load(ff)
+        predictions = generate_predictions_signature_evaulation_1(content)
+        return (predictions)
+    elif request.method == 'GET':
+        return render_template('index_signature_eval_1.html')
+
 # for the n8n system to convert from bjson back to json
 @application.route('/bson_json', methods=['GET', 'POST'])
 def remove_backslashes():
