@@ -1,8 +1,8 @@
-version: '2'
+version: '3'
 
 services:
  intent_recognition:
-  container_name: intent_recognition
+  container_name: intent_recognition_3
   build: .
   ports:
   - "8000:5000"
