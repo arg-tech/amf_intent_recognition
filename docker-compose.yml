@@ -1,0 +1,8 @@
+version: '1'
+
+services:
+ intent_recognition:
+  container_name: intent_recognition_bert_1
+  build: .
+  ports:
+  - "8000:5000"
