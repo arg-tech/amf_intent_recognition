@@ -78,7 +78,7 @@ def mind(comma, intentions):
 
     return comma
 
-def generate_predictions_amf_nts(input_xaif_data):
+def generate_predictions_amf_ts(input_xaif_data):
     comma = filter_xaif(input_xaif_data)
     filtered = (filter_nodes(comma))
     # Load BERT model and tokenizer
