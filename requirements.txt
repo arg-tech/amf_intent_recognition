@@ -1,2 +1,8 @@
-Flask==2.0.3
+Flask
 requests==2.23.0
+tensorflow
+tf-keras
+torch
+transformers
+scikit-learn
+amf-fast-inference==0.0.3

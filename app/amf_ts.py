@@ -105,11 +105,11 @@ def mind(comma, intentions):
 
     return comma
 
-def generate_predictions_amf_nts(input_xaif_data):
+def generate_predictions_amf_ts(input_xaif_data):
     comma = filter_xaif(input_xaif_data)
     filtered = (filter_nodes(comma))
     # Load BERT model and tokenizer
-    model_path = 'Godfrey2712/intent_recognition'
+    model_path = 'Godfrey2712/amf_ir'
     tokenizer_path = 'Godfrey2712/amf_ir_bert_tokens'
     tokenizer = BertTokenizer.from_pretrained(tokenizer_path)
     model = BertForSequenceClassification.from_pretrained(model_path)
@@ -122,26 +122,7 @@ def generate_predictions_amf_nts(input_xaif_data):
     inputs = locutions
 
     # List with decoded values
-    labels = [
-    "Ad verecundiam",
-    "Agreeing",
-    "Arguing",
-    "Asserting",
-    "Assertive Challenging",
-    "Assertive Questioning",
-    "Challenging",
-    "Default Illocuting",
-    "Directive Questioning",
-    "Disagreeing",
-    "Ironic Asserting",
-    "Offering",
-    "Order",
-    "Popular Conceding",
-    "Pure Challenging",
-    "Pure Questioning",
-    "Rhetorical Challenging",
-    "Rhetorical Questioning",
-    "Conceding"]
+    labels = ['Popular Conceding', 'Arguing', 'Directive Questioning', 'Rhetorical Challenging', 'Agreeing', 'Asserting', 'Pure Questioning', 'Assertive Challenging', 'Pure Challenging', 'Ironic Asserting', 'Challenging', 'Disagreeing', 'Conceding', 'Ad verecundiam', 'Offering', 'Order', 'Default Illocuting', 'Assertive Questioning', 'Rhetorical Questioning']
     # Instantiate a LabelEncoder object
     label_encoder = LabelEncoder()
 

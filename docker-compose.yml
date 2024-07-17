@@ -1,8 +1,7 @@
-version: '1'
-
+version: "3.3"
 services:
  intent_recognition:
-  container_name: intent_recognition_bert_1
+  container_name: amf_intent_recognition
   build: .
   ports:
   - "8000:5000"

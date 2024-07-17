@@ -1,7 +1,11 @@
-import torch
-from transformers import BertForSequenceClassification, BertTokenizer
+from transformers import BertForSequenceClassification, BertTokenizer, AutoModelForSequenceClassification, AutoTokenizer, pipeline
 from sklearn.preprocessing import LabelEncoder
+from amf_fast_inference import model
+import joblib
+import os
+import torch
 #from datetime import datetime, timedelta
+
 
 def filter_xaif(xaif_data):
     filtered_xaif = xaif_data.copy()
@@ -47,7 +51,7 @@ def filter_nodes(comma):
 
     return comma
 
-def input (filtered):
+def input(filtered):
     list1 = []
     
     # Check for fromID keys in edges that match nodeID keys in nodes with type L
@@ -58,39 +62,13 @@ def input (filtered):
 
     return list1
 
-def output (filtered):
-    list2 = []
-
-    for edge in filtered["AIF"]["edges"]:
-        for node in filtered["AIF"]["nodes"]:
-            if node["nodeID"] == edge["toID"] and node["type"] == "YA":
-                list2.append(node["text"])
-
-    return list2
-
-# Create a function to make predictions
-def predict(intent, tokenizer, model):
-    # Tokenize input text
-    inputs = tokenizer(intent, padding=True, truncation=True, return_tensors="pt")
-
-    # Get predictions from model
-    with torch.no_grad():
-        outputs = model(**inputs)
-
-    # Convert logits to probabilities
-    probs = torch.softmax(outputs.logits, dim=1)
-
-    # Return the predicted class (0 or 1) with the highest probability
-    return torch.argmax(probs).item()
-
-def get_predicted_values(inputs, tokenizer, model):
+def get_predicted_values(inputs, pipe):
     # Instantiate an empty list to store the predicted values
     predicted_values = []
 
-    # Call the predict function for each input text
-    for intent in inputs:
-        predicted_value = predict(intent, tokenizer, model)
-        predicted_values.append(predicted_value)
+    for text in inputs:
+        prediction = pipe(text)
+        predicted_values.append(prediction[0]['label'])  # Extract the label
 
     return predicted_values
 
@@ -106,48 +84,25 @@ def generate_predictions_amf_nts(input_xaif_data):
     comma = filter_xaif(input_xaif_data)
     filtered = (filter_nodes(comma))
     # Load BERT model and tokenizer
-    model_path = 'Godfrey2712/intent_recognition'
-    tokenizer_path = 'Godfrey2712/amf_ir_bert_tokens'
-    tokenizer = BertTokenizer.from_pretrained(tokenizer_path)
-    model = BertForSequenceClassification.from_pretrained(model_path)
+    # Define the model path on Hugging Face
+    model_path = 'Godfrey2712/amf_illoc_force_intent_recognition'
 
-    # Set model to evaluation mode
-    model.eval()
+    # Load the tokenizer and model from the Hugging Face repository
+    tokenizer = AutoTokenizer.from_pretrained(model_path)
+    #model = AutoModelForSequenceClassification.from_pretrained(model_path)
+
+    loader = model.ModelLoader(model_path)
+    pruned_model = loader.load_model()   
+
+    # Initialize the pipeline with the loaded model and tokenizer
+    pipe = pipeline('text-classification', model=pruned_model, tokenizer=tokenizer)
 
     # Call the input function
-    locutions = input (filtered)
+    locutions = input(filtered)
     inputs = locutions
 
-    # List with decoded values
-    labels = [
-    "Ad verecundiam",
-    "Agreeing",
-    "Arguing",
-    "Asserting",
-    "Assertive Challenging",
-    "Assertive Questioning",
-    "Challenging",
-    "Default Illocuting",
-    "Directive Questioning",
-    "Disagreeing",
-    "Ironic Asserting",
-    "Offering",
-    "Order",
-    "Popular Conceding",
-    "Pure Challenging",
-    "Pure Questioning",
-    "Rhetorical Challenging",
-    "Rhetorical Questioning",
-    "Conceding"]
-    # Instantiate a LabelEncoder object
-    label_encoder = LabelEncoder()
+    predicted_values = get_predicted_values(inputs, pipe)
 
-    # Fit the label encoder on the labels
-    label_encoder.fit(labels)
-    predicted_values = get_predicted_values(inputs, tokenizer, model)
-
-    intentions = label_encoder.inverse_transform(predicted_values)
-
-    predictions = mind(comma, intentions)
+    predictions = mind(comma, predicted_values)
 
     return predictions
