@@ -4,4 +4,4 @@ services:
     container_name: amf_intent_recognition
     build: .
     ports:
-    - "8000:5000"
+    - "8050:5050"
