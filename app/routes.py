@@ -1,7 +1,6 @@
-from flask import request, render_template, Response
+from flask import request, render_template
 from . import application
 import json
-import os
 from app.amf_nts import generate_predictions_amf_nts
 from app.amf_ts import generate_predictions_amf_ts
 
@@ -16,7 +15,8 @@ def amf_nts():
         return (predictions)
     elif request.method == 'GET':
         return render_template('index_amf_nts.html')
-    
+        #return render_template('README.md')
+
 @application.route('/amf_ts', methods=['GET', 'POST'])
 def amf_ts():
     if request.method == 'POST':
@@ -28,6 +28,6 @@ def amf_ts():
         return (predictions)
     elif request.method == 'GET':
         return render_template('index_amf_ts.html')
-    
+
 if __name__ == '__main__':
     application.run(debug=True)

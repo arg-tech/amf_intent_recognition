@@ -1,14 +1,13 @@
 
 
-# Default Intent Recognition using RoBERTa-large
+# Default Intent Recognition using Roberta-large
 
 This service, part of the Argument Mining Framework (AMF), classifies illocutionary forces in locutions as either Agreeing, Arguing, Asserting, Assertive Questioning, Challenging, Default Illocuting, Disagreeing, Pure Questioning, Restating, Rhetorical Questioning. It leverages a pre-trained LLM fine-tuned on the QT30, US2016, MM123, and MM2012 dataset. It can be integrated into the argument mining pipeline alongside other AMF components for further analysis and processing.
 
 ## Table of Contents
 - [Brief Overview of the Architecture/Method](#brief-overview-of-the-architecturemethod)
 - [Endpoints](#endpoints)
-  - [/amf_ts](#time-stamp)
-  - [/amf_nts](#no-time-stamp)  
+  - [/bert-te](#bert-te)
 - [Input and Output Formats](#input-and-output-formats)
   - [Input Format](#input-format)
   - [Output Format](#output-format)
@@ -16,26 +15,26 @@ This service, part of the Argument Mining Framework (AMF), classifies illocution
   - [Requirements for Installation](#requirements-for-installation)
   - [Installation Setup](#installation-setup)
     - [Using Docker Container](#using-docker-container)
+    - [From Source Without Docker](#from-source-without-docker)
 - [Usage](#usage)
   - [Using Programming Interface](#using-programming-interface)
   - [Using cURL](#using-curl)
   - [Using Web Interface](#using-web-interface)
 
-
 ## Brief Overview of the Architecture/Method
-This application leverages a pruned and quantized RoBERTa-large model, fine-tuned on the AIFdb datasets, to perform communicative intent recognition in text-classification task settings. By pruning and quantizing the model, we achieve faster inference times without significantly compromising accuracy. The system maps illocutionary forces to their respective locutions in discourse. This approach ensures the model remains lightweight and suitable for real-time applications within AMF.
+This application leverages a pruned and quantized BART model, fine-tuned on the MNLI dataset, to perform textual entailment in text-classification task settings. By pruning and quantizing the model, we achieve faster inference times without significantly compromising accuracy. The system maps entailment relations to support relations and contradiction relations to conflicts, for constructing argument structures. This approach ensures the model remains lightweight and suitable for real-time applications within AMF.
 
-- **Dataset**: [Link to datasets]( https://corpora.aifdb.org/mm2012, https://corpora.aifdb.org/mm123, https://corpora.aifdb.org/qt30, https://corpora.aifdb.org/US2016)
-- **Model ID**: [Godfrey2712/amf_illoc_force_intent_recognition](https://huggingface.co/Godfrey2712/amf_illoc_force_intent_recognition)
-- **Repository**: [GitHub repository](https://github.com/arg-tech/amf_intent_recognition)
-- **Paper**: [Link to published paper](#)
+- **Dataset**: [Link to datasets](#)
+- **Model ID**: [facebook/bart-large-mnli](https://huggingface.co/facebook/bart-large-mnli)
+- **Repository**: [GitHub repository](https://github.com/arg-tech/bert-te)
+- **Paper**: [Link to published paper](https://arxiv.org/abs/1909.00161)
 
 ### Endpoints
 
-#### /amf_nts
+#### /bert-te
 
 **Details**
-- **URL**: `amfws-intentifier.arg.tech/amf_nts`
+- **URL**: `bert-te.amfws.arg.tech/bert-te`
 - **Methods**: `GET`, `POST`
 
 **GET Method**
@@ -44,18 +43,18 @@ This application leverages a pruned and quantized RoBERTa-large model, fine-tune
 
 **POST Method**
 - **Input**: Expects a file upload (`file` parameter) in the xAIF format.
-- **Output**: The route processes the uploaded file, classifies YA-types to L-types nodes, updates the xAIF with these intents, and returns the updated xAIF as a JSON file.
+- **Output**: The route processes the uploaded file, identifies argument relations between I-nodes, updates the xAIF with these relations, and returns the updated xAIF as a JSON file.
 
 
 
 ## Input and Output Formats
 ### Input Format
 - **JSON File**: The input must be in xAIF format. For details on the xAIF JSON format, refer to [xAIF format details](https://wiki.arg.tech/books/amf/page/xaif). xAIF json can be viewed as a dictionary containing list of nodes, edges, locutions, among others. 
-- Argument units and their relations are represented as nodes.
-  - **Argument Units**: Illocutionary Forces are specified as type "YA" nodes, while locution nodes are specified as type "L".
-  - **Illocutionary Forces**: Agreeing, Arguing, Asserting, Assertive Questioning, Challenging, Default Illocuting, Disagreeing, Pure Questioning, Restating, Rhetorical Questioning.
+- Argument units and their relations are represented as nodes. Both argument units and argument relations are classified by their type. 
+  - **Argument Units**: Propositions are specified as type "I" nodes, while locution nodes are specified as type "L".
+  - **Argument Relations**: Support relations are denoted as "RA" and attack relations as "CA".
 - The relations between the nodes (argument units and relations) are presented as edges.
-In the following example, the xAIF involves L nodes, and YA nodes (relation nodes connecting the L nodes with the YA nodes).  The nodes indicating the illocutionary forces (YA), has a default value of "Default Illocuting".
+In the following example, the xAIF involves L nodes, I nodes, YA nodes (relation nodes connecting the L nodes with the I nodes).  The nodes indicating the argument relations between the I nodes are missing.
 
 - **Example**: 
 ```python
@@ -180,7 +179,7 @@ In the following example, the xAIF involves L nodes, and YA nodes (relation node
 
 
 ### Output Format
-The YA text values are updated with the values from the model's predictions.
+The inferred argument structure is returned in the xAIF format, including the argument relation nodes and their connecting edges, while preserving other information in a monotonic fashion. As demonstrated in the following example, the service identifies 1 "RA" node (nodeID 9) between "I" node 3 and 7.
 - Example xAIF Output:
 
 ```python
@@ -266,7 +265,7 @@ The YA text values are updated with the values from the model's predictions.
       },
       {
         "nodeID": 4,
-        "text": "Asserting",
+        "text": "Default Illocuting",
         "type": "YA"
       },
       {
@@ -276,7 +275,7 @@ The YA text values are updated with the values from the model's predictions.
       },
       {
         "nodeID": 6,
-        "text": "Arguing",
+        "text": "Default Illocuting",
         "type": "YA"
       },
       {
@@ -286,7 +285,7 @@ The YA text values are updated with the values from the model's predictions.
       },
       {
         "nodeID": 8,
-        "text": "Disagreeing",
+        "text": "Default Illocuting",
         "type": "YA"
       },
       {
@@ -326,8 +325,6 @@ The YA text values are updated with the values from the model's predictions.
 - xaif_eval==0.0.9
 - amf-fast-inference==0.0.3
 - markdown2
-- tf-keras
-- scikit-learn
 
 ### Installation Setup
 #### Using Docker Container
@@ -335,18 +332,35 @@ The YA text values are updated with the values from the model's predictions.
 
 1. **Clone the Repository:**
    ```sh
-   git clone https://github.com/arg-tech/amf_intent_recognition.git
+   git clone https://github.com/arg-tech/bert-te.git
    ```
 
 2. **Navigate to the Project Root Directory:**
+   ```sh
+   cd bert-te
+   ```
 
 3. **Make Required Changes:**
-   - Edit the `Dockerfile`, and `docker-compose.yml` files to specify the container name, port number, and other settings as needed.
+   - Edit the `Dockerfile`, `main.py`, and `docker-compose.yml` files to specify the container name, port number, and other settings as needed.
 
 4. **Build and Run the Docker Container:**
    ```sh
-   docker-compose up --build
+   docker-compose up
    ```
+
+#### From Source Without Docker
+
+If you prefer to install without Docker:
+
+1. **Install Dependencies:**
+   - Ensure Python and necessary libraries are installed.
+
+2. **Configure and Run:**
+   - Configure the environment variables and settings in `main.py`.
+   - Run the application using Python:
+     ```sh
+     python main.py
+     ```
 
 ## Usage
 
@@ -357,7 +371,7 @@ The YA text values are updated with the values from the model's predictions.
 import requests
 import json
 
-url = 'http://your-server-url/amf_nts'
+url = 'http://your-server-url/bert-te'
 input_file_path = 'example_xAIF.json'
 
 with open(input_file_path, 'r', encoding='utf-8') as file:
@@ -391,7 +405,7 @@ else:
 ```bash
 curl -X POST \
   -F "file=@example_xAIF.json" \
-  http://your-server-url/amf_nts
+  http://your-server-url/bert-te
 ```
 
 ### Using Web Interface
@@ -406,5 +420,5 @@ The service can also be used to create a pipeline on our n8n interface.
 
 
 <div style="text-align:center;">
-    <img src="image/n8n_screenshot.jpeg" alt="Image Description" width="40%">
+    <img src="img/n8n_screnshot.jpeg" alt="Image Description" width="40%">
 </div>

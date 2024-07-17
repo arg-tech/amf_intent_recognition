@@ -1,11 +1,5 @@
-from transformers import BertForSequenceClassification, BertTokenizer, AutoModelForSequenceClassification, AutoTokenizer, pipeline
-from sklearn.preprocessing import LabelEncoder
+from transformers import AutoTokenizer, pipeline
 from amf_fast_inference import model
-import joblib
-import os
-import torch
-#from datetime import datetime, timedelta
-
 
 def filter_xaif(xaif_data):
     filtered_xaif = xaif_data.copy()
@@ -84,12 +78,10 @@ def generate_predictions_amf_nts(input_xaif_data):
     comma = filter_xaif(input_xaif_data)
     filtered = (filter_nodes(comma))
     # Load BERT model and tokenizer
-    # Define the model path on Hugging Face
     model_path = 'Godfrey2712/amf_illoc_force_intent_recognition'
 
     # Load the tokenizer and model from the Hugging Face repository
     tokenizer = AutoTokenizer.from_pretrained(model_path)
-    #model = AutoModelForSequenceClassification.from_pretrained(model_path)
 
     loader = model.ModelLoader(model_path)
     pruned_model = loader.load_model()   
