@@ -1,0 +1,116 @@
+{
+  "AIF": {
+    "descriptorfulfillments": null,
+    "edges": [
+      {
+        "edgeID": 0,
+        "fromID": 0,
+        "toID": 4
+      },
+      {
+        "edgeID": 1,
+        "fromID": 4,
+        "toID": 3
+      },
+      {
+        "edgeID": 2,
+        "fromID": 1,
+        "toID": 6
+      },
+      {
+        "edgeID": 3,
+        "fromID": 6,
+        "toID": 5
+      },
+      {
+        "edgeID": 4,
+        "fromID": 2,
+        "toID": 8
+      },
+      {
+        "edgeID": 5,
+        "fromID": 8,
+        "toID": 7
+      }
+    ],
+    "locutions": [
+      {
+        "nodeID": 0,
+        "personID": 0
+      },
+      {
+        "nodeID": 1,
+        "personID": 1
+      },
+      {
+        "nodeID": 2,
+        "personID": 2
+      }
+    ],
+    "nodes": [
+      {
+        "nodeID": 0,
+        "text": "disagreements between party members are entirely to be expected.",
+        "type": "L"
+      },
+      {
+        "nodeID": 1,
+        "text": "the SNP has disagreements.",
+        "type": "L"
+      },
+      {
+        "nodeID": 2,
+        "text": "it's not uncommon for there to be disagreements between party members.",
+        "type": "L"
+      },
+      {
+        "nodeID": 3,
+        "text": "disagreements between party members are entirely to be expected.",
+        "type": "I"
+      },
+      {
+        "nodeID": 4,
+        "text": "Default Illocuting",
+        "type": "YA"
+      },
+      {
+        "nodeID": 5,
+        "text": "the SNP has disagreements.",
+        "type": "I"
+      },
+      {
+        "nodeID": 6,
+        "text": "Default Illocuting",
+        "type": "YA"
+      },
+      {
+        "nodeID": 7,
+        "text": "it's not uncommon for there to be disagreements between party members.",
+        "type": "I"
+      },
+      {
+        "nodeID": 8,
+        "text": "Default Illocuting",
+        "type": "YA"
+      }
+    ],
+    "participants": [
+      {
+        "firstname": "Speaker",
+        "participantID": 0,
+        "surname": "1"
+      },
+      {
+        "firstname": "Speaker",
+        "participantID": 1,
+        "surname": "2"
+      }
+    ],
+    "schemefulfillments": null
+  },
+  "dialog": true,
+  "ova": [],
+  "text": {
+    "txt": " Speaker 1 <span class=\"highlighted\" id=\"0\">disagreements between party members are entirely to be expected.</span>.<br><br> Speaker 2 <span class=\"highlighted\" id=\"1\">the SNP has disagreements.</span>.<br><br> Speaker 1 <span class=\"highlighted\" id=\"2\">it's not uncommon for there to be disagreements between party members. </span>.<br><br>"
+  }
+}

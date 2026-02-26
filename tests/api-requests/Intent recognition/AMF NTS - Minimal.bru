@@ -1,0 +1,68 @@
+meta {
+  name: AMF NTS - Minimal
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/amf_nts
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  Content-Type: multipart/form-data
+}
+
+body:multipart-form {
+  file: @file(test-inputs/xaif_minimal.json)
+}
+
+tests {
+  const validIntents = [
+    "Agreeing",
+    "Arguing",
+    "Asserting",
+    "Assertive Questioning",
+    "Challenging",
+    "Default Illocuting",
+    "Disagreeing",
+    "Pure Questioning",
+    "Restating",
+    "Rhetorical Questioning"
+  ];
+
+  test("Response status should be 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Response should contain AIF with nodes and edges", function () {
+    const body = res.getBody();
+    expect(body).to.have.property("AIF");
+    expect(body.AIF).to.have.property("nodes");
+    expect(body.AIF).to.have.property("edges");
+  });
+
+  test("YA nodes should be classified with valid intents", function () {
+    const body = res.getBody();
+    const yaNodes = body.AIF.nodes.filter(n => n.type === "YA");
+    expect(yaNodes.length).to.be.greaterThan(0);
+    yaNodes.forEach(node => {
+      expect(validIntents).to.include(node.text);
+    });
+  });
+
+  test("YA node should no longer have Default Illocuting", function () {
+    const body = res.getBody();
+    const yaNodes = body.AIF.nodes.filter(n => n.type === "YA");
+    const defaultNodes = yaNodes.filter(n => n.text === "Default Illocuting");
+    expect(defaultNodes.length).to.equal(0);
+  });
+
+  test("L nodes should be preserved unchanged", function () {
+    const body = res.getBody();
+    const lNodes = body.AIF.nodes.filter(n => n.type === "L");
+    expect(lNodes.length).to.be.greaterThan(0);
+    expect(lNodes[0].text).to.equal("I strongly believe that climate change is a serious problem.");
+  });
+}

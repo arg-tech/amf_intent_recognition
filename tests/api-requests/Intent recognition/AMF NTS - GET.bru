@@ -1,0 +1,21 @@
+meta {
+  name: AMF NTS - GET
+  type: http
+  seq: 4
+}
+
+get {
+  url: {{baseUrl}}/amf_nts
+  auth: inherit
+}
+
+tests {
+  test("Response status should be 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Response should return HTML page", function () {
+    const body = res.getBody();
+    expect(body).to.include("Intentifier");
+  });
+}

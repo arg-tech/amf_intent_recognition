@@ -1,0 +1,75 @@
+meta {
+  name: AMF TS - README example
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{baseUrl}}/amf_ts
+  body: multipartForm
+  auth: inherit
+}
+
+headers {
+  Content-Type: multipart/form-data
+}
+
+body:multipart-form {
+  file: @file(test-inputs/xaif_readme_example.json)
+}
+
+tests {
+  const validIntents = [
+    "Agreeing",
+    "Arguing",
+    "Asserting",
+    "Assertive Questioning",
+    "Challenging",
+    "Default Illocuting",
+    "Disagreeing",
+    "Pure Questioning",
+    "Restating",
+    "Rhetorical Questioning"
+  ];
+
+  test("Response status should be 200", function () {
+    expect(res.status).to.equal(200);
+  });
+
+  test("Response should contain AIF structure", function () {
+    const body = res.getBody();
+    expect(body).to.have.property("AIF");
+    expect(body.AIF).to.have.property("nodes");
+    expect(body.AIF).to.have.property("edges");
+  });
+
+  test("All 3 YA nodes should be classified with valid intents", function () {
+    const body = res.getBody();
+    const yaNodes = body.AIF.nodes.filter(n => n.type === "YA");
+    expect(yaNodes.length).to.equal(3);
+    yaNodes.forEach(node => {
+      expect(validIntents).to.include(node.text);
+    });
+  });
+
+  test("Nodes should have timestamps (TS variant)", function () {
+    const body = res.getBody();
+    const nodesWithTimestamp = body.AIF.nodes.filter(n => n.hasOwnProperty("timestamp"));
+    expect(nodesWithTimestamp.length).to.be.greaterThan(0);
+  });
+
+  test("Timestamps should be in HH:MM:SS format", function () {
+    const body = res.getBody();
+    const timeRegex = /^\d{2}:\d{2}:\d{2}$/;
+    const nodesWithTimestamp = body.AIF.nodes.filter(n => n.hasOwnProperty("timestamp"));
+    nodesWithTimestamp.forEach(node => {
+      expect(node.timestamp).to.match(timeRegex);
+    });
+  });
+
+  test("L nodes should be preserved", function () {
+    const body = res.getBody();
+    const lNodes = body.AIF.nodes.filter(n => n.type === "L");
+    expect(lNodes.length).to.equal(3);
+  });
+}
