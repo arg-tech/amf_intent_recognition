@@ -1,0 +1,53 @@
+{
+  "AIF": {
+    "descriptorfulfillments": null,
+    "edges": [
+      {
+        "edgeID": 0,
+        "fromID": 0,
+        "toID": 2
+      },
+      {
+        "edgeID": 1,
+        "fromID": 2,
+        "toID": 1
+      }
+    ],
+    "locutions": [
+      {
+        "nodeID": 0,
+        "personID": 0
+      }
+    ],
+    "nodes": [
+      {
+        "nodeID": 0,
+        "text": "I strongly believe that climate change is a serious problem.",
+        "type": "L"
+      },
+      {
+        "nodeID": 1,
+        "text": "I strongly believe that climate change is a serious problem.",
+        "type": "I"
+      },
+      {
+        "nodeID": 2,
+        "text": "Default Illocuting",
+        "type": "YA"
+      }
+    ],
+    "participants": [
+      {
+        "firstname": "Speaker",
+        "participantID": 0,
+        "surname": "1"
+      }
+    ],
+    "schemefulfillments": null
+  },
+  "dialog": false,
+  "ova": [],
+  "text": {
+    "txt": " Speaker 1 <span class=\"highlighted\" id=\"0\">I strongly believe that climate change is a serious problem.</span>.<br><br>"
+  }
+}

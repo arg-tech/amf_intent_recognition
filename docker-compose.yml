@@ -1,4 +1,3 @@
-version: "3.3"
 services:
   myapp:
     container_name: amf_intent_recognition
